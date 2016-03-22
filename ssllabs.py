@@ -89,31 +89,31 @@ class SSLLabsAssessment(object):
         if _status == 200:
             return response
         elif _status == 400:
-            self._die_on_error('[API] invocation error: {}'.format(response.text))
+            self._die_on_error('[API] invocation error: {0}'.format(response.text))
         elif _status == 429:
-            self._die_on_error('[API] client request rate too high or too many new assessments too fast: {}'.format(response.text))
+            self._die_on_error('[API] client request rate too high or too many new assessments too fast: {0}'.format(response.text))
         elif _status == 500:
-            self._die_on_error('[API] internal error: {}'.format(response.text))
+            self._die_on_error('[API] internal error: {0}'.format(response.text))
         elif _status == 503:
-            self._die_on_error('[API] the service is not available: {}'.format(response.text))
+            self._die_on_error('[API] the service is not available: {0}'.format(response.text))
         elif _status == 529:
-            self._die_on_error('[API] the service is overloaded: {}'.format(response.text))
+            self._die_on_error('[API] the service is overloaded: {0}'.format(response.text))
         else:
-            self._die_on_error('[API] unknown status code: {}, {}'.format(_status, response.text))
+            self._die_on_error('[API] unknown status code: {0}, {1}'.format(_status, response.text))
 
     def _check_api_info(self):
         try:
             if not self.API_URL:
                 for url in self.API_URLS:
                     try:
-                        response = self._handle_api_error(requests.get('{}/info'.format(url))).json()
+                        response = self._handle_api_error(requests.get('{0}/info'.format(url))).json()
                         self.API_URL = url
                         break
                     except requests.ConnectionError:
                         continue
             else:
                 try:
-                    response = self._handle_api_error(requests.get('{}/info'.format(self.API_URL))).json()
+                    response = self._handle_api_error(requests.get('{0}/info'.format(self.API_URL))).json()
                 except requests.ConnectionError:
                     self._die_on_error('[ERROR] Provided API URL is unavailable.')
 
@@ -226,7 +226,7 @@ class SSLLabsAssessment(object):
                 response = self._handle_api_error(requests.get(url)).json()
                 print('[INFO] [{ip_address}] Progress: {progress}%, Status: {status}'.format(
                     ip_address=response.get('ipAddress'),
-                    progress='{}'.format(response.get('progress')) if response.get('progress') > -1 else '0',
+                    progress='{0}'.format(response.get('progress')) if response.get('progress') > -1 else '0',
                     status=response.get('statusDetailsMessage')
                     )
                 )
@@ -272,13 +272,13 @@ class SSLLabsAssessment(object):
 
         if not resume:
             if not self.QUIET:
-                print('[INFO] Retrieving assessment for {}...'.format(self.host))
+                print('[INFO] Retrieving assessment for {0}...'.format(self.host))
 
             if not self._trigger_new_assessment():
                 return False
         else:
             if not self.QUIET:
-                print('[INFO] Checking running assessment for {}'.format(self.host))
+                print('[INFO] Checking running assessment for {0}'.format(self.host))
 
         while True:
             _status = self._poll_api()
@@ -296,13 +296,13 @@ class SSLLabsAssessment(object):
                 else:
                     return self._get_all_results()
             elif _status.get('status') == 'ERROR':
-                print('An error occured: {}'.format(_status.errors))
+                print('An error occured: {0}'.format(_status.errors))
                 return
             else:
                 continue
 
         if self.VERBOSE:
-            print('[INFO] Testing {} host(s)'.format(len(_status.get('endpoints'))))
+            print('[INFO] Testing {0} host(s)'.format(len(_status.get('endpoints'))))
 
         self.manager = multiprocessing.Manager()
         self.endpoint_jobs = []
@@ -335,14 +335,14 @@ class SSLLabsAssessment(object):
                 elif _host_status == 'READY':
                     return self._get_all_results()
                 elif _host_status == 'ERROR':
-                    print('[ERROR] An error occured: {}'.format(_status.errors))
+                    print('[ERROR] An error occured: {0}'.format(_status.errors))
                     return
                 elif _host_status == 'DNS':
                     if self.VERBOSE:
                         print('[INFO] Resolving hostname')
                     time.sleep(4)
                 else:
-                    print('[INFO] Unknown host status: {}'.format(_host_status))
+                    print('[INFO] Unknown host status: {0}'.format(_host_status))
         except KeyboardInterrupt:
             pass
         except:
